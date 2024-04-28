@@ -1,0 +1,68 @@
+public static string EncryptDecrypt(string textToEncrypt)
+    {
+        StringBuilder inSb = new StringBuilder(textToEncrypt);
+        StringBuilder outSb = new StringBuilder(textToEncrypt.Length);
+        char c;
+        for (int i = 0; i < textToEncrypt.Length; i++)
+        {
+            c = inSb[i];
+            c = (char)(c ^ key);
+            outSb.Append(c);
+        }
+        return outSb.ToString();
+    }
+
+
+    public void SavePlayerData()
+    {
+        ////no encoding no encrypting
+        //string serialisedDataString = JSON.Serialize(playerData).CreateString();
+        //File.WriteAllText(filePath, serialisedDataString);
+
+
+        ////encode
+        //string serialisedDataString = JSON.Serialize(playerData).CreateString();
+        //var encodedString = Convert.ToBase64String(Encoding.UTF8.GetBytes(serialisedDataString));
+        //File.WriteAllText(filePath, encodedString);
+
+        ////encrypt
+        //string serialisedDataString = JSON.Serialize(playerData).CreateString();
+        //File.WriteAllText(filePath, EncryptDecrypt(serialisedDataString));
+
+        //encode and encrypt
+        string serialisedDataString = JSON.Serialize(playerData).CreateString();
+        //encode the text in the file
+        var encodedString = Convert.ToBase64String(Encoding.UTF8.GetBytes(serialisedDataString));
+        //writes the text with the XOR encryption
+        File.WriteAllText(filePath, EncryptDecrypt(encodedString));
+
+    }
+
+public void LoadPlayerData()
+    {
+        if (!File.Exists(filePath))
+        {
+            playerData = new PlayerData();
+            SavePlayerData();
+        }
+
+        ////load normal data
+        //string fileContents = File.ReadAllText(filePath);
+        //playerData = JSON.ParseString(fileContents).Deserialize<PlayerData>();
+
+        ////decode
+        //string fileContents = File.ReadAllText(filePath);
+        //var encodedString = Encoding.UTF8.GetString(Convert.FromBase64String(fileContents));
+        //playerData = JSON.ParseString(encodedString).Deserialize<PlayerData>();
+
+        ////decrypt
+        //string fileContents = File.ReadAllText(filePath);
+        //var decryptedString = EncryptDecrypt(fileContents);
+        //playerData = JSON.ParseString(decryptedString).Deserialize<PlayerData>();
+
+        //decode and decrypt
+        string fileContents = File.ReadAllText(filePath);
+        var decryptedString =  EncryptDecrypt(fileContents);
+        var encodedString = Encoding.UTF8.GetString(Convert.FromBase64String(decryptedString));
+        playerData = JSON.ParseString(encodedString).Deserialize<PlayerData>();
+    }
